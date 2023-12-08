@@ -10,10 +10,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
 
 /**
- * @author chenfanglin1
+ * @author baixiu
  * @date 创建时间 2023/12/7 9:31 PM
  */
 @RunWith(SpringRunner.class)

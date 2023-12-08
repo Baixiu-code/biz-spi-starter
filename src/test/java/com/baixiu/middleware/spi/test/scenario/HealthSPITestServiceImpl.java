@@ -4,7 +4,7 @@ import com.baixiu.middleware.spi.annotation.Extension;
 import com.baixiu.middleware.spi.test.IdentityParam;
 
 /**
- * @author chenfanglin1
+ * @author baixiu
  * @date 创建时间 2023/12/7 9:28 PM
  */
 @Extension(appName = "Health",scenario = "Health")
