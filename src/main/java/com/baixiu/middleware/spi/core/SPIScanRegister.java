@@ -3,12 +3,15 @@ package com.baixiu.middleware.spi.core;
 import com.baixiu.middleware.spi.annotation.SPIDefine;
 import com.baixiu.middleware.spi.annotation.SPIScan;
 import com.baixiu.middleware.spi.consts.CommonConsts;
+import com.baixiu.middleware.spi.proxy.ExtensionBeanInterceptor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
@@ -20,6 +23,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.ClassUtils;
 
+import java.lang.reflect.Proxy;
 import java.util.*;
 
 /**
@@ -46,6 +50,9 @@ public class SPIScanRegister implements ImportBeanDefinitionRegistrar , BeanFact
      */
     private ResourceLoader resourceLoader;
 
+
+    private BeanFactory beanFactory;
+
     @Override
     public void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry beanDefinitionRegistry) {
         //定义scanner
@@ -58,28 +65,53 @@ public class SPIScanRegister implements ImportBeanDefinitionRegistrar , BeanFact
             Set<BeanDefinition> beanDefinitions= spiScanner.findCandidateComponents(scanPackage);
             //遍历每个 bean 注册定义，生产动态代理对象，通过 ImportBeanDefinitionRegistrar 开放的接口registerBeanDefinitions 进行
             //动态代理对象的注册到 spring 容器
-            for (BeanDefinition beanDefinition : beanDefinitions) {
-                //当注册对象实例为注解bean定义时 获取注解的元数据信息
-                AnnotationMetadata annotationMetadataItem=null;
-                if(beanDefinition instanceof AnnotatedBeanDefinition){
-                    annotationMetadataItem=((AnnotatedBeanDefinition) beanDefinition).getMetadata();
-                }
-                //通过注解定义的元数据信息获取注解对应的注解属性值
-                Map<String,Object> spiDefineAttrs=annotationMetadataItem.getAnnotationAttributes (SPIDefine.class.getName ());
-                if(spiDefineAttrs ==null || spiDefineAttrs.isEmpty ()){
-                    continue;
-                }
-                String routerBeanName=null;
-                if(spiDefineAttrs.get("route") instanceof String){
-                    routerBeanName = (String) spiDefineAttrs.get("route");
-                }
+            try {
+                for (BeanDefinition beanDefinition : beanDefinitions) {
 
+                    //当注册对象实例为注解bean定义时 获取注解的元数据信息
+                    AnnotationMetadata annotationMetadataItem=null;
+                    if(beanDefinition instanceof AnnotatedBeanDefinition){
+                        annotationMetadataItem=((AnnotatedBeanDefinition) beanDefinition).getMetadata();
+                    }
+
+                    //通过注解定义的元数据信息获取注解对应的注解属性值
+                    Map<String,Object> spiDefineAttrs=annotationMetadataItem.getAnnotationAttributes (SPIDefine.class.getName ());
+                    if(spiDefineAttrs ==null || spiDefineAttrs.isEmpty ()){
+                        continue;
+                    }
+                    String routerBeanName=null;
+                    if(spiDefineAttrs.get(CommonConsts.SPI_DEFINE_ATTR_NAME) instanceof String){
+                        routerBeanName = (String) spiDefineAttrs.get(CommonConsts.SPI_DEFINE_ATTR_NAME);
+                    }
+
+                    //get router
+                    SPIRouter spiRouter=beanFactory.getBean(routerBeanName,SPIRouter.class);
+
+                    //创建beanFactory
+                    ExtensionBeanInterceptor interceptor=this.beanFactory.getBean(ExtensionBeanInterceptor.class);
+
+                    //创建动态代理
+                    Class<?> clazz=Class.forName(beanDefinition.getBeanClassName());
+                    interceptor.setServiceInterface(clazz);
+                    interceptor.setSpiRouter(spiRouter);
+                    Object spiProxyObject=interceptor.getObject();
+                    BeanDefinitionBuilder beanDefinitionBuilder=BeanDefinitionBuilder.genericBeanDefinition(spiProxyObject.getClass());
+                    beanDefinitionBuilder.addConstructorArgValue (Proxy.getInvocationHandler(spiProxyObject));
+                    AbstractBeanDefinition realBeanDefinition = beanDefinitionBuilder.getBeanDefinition();
+                    beanDefinition.setPrimary(true);
+
+                    //注册definition到spring容器
+                    StringBuilder sb = new StringBuilder()
+                            .append(clazz.getSimpleName())
+                            .append("#Proxy");
+                    beanDefinitionRegistry.registerBeanDefinition(sb.toString(), realBeanDefinition);
+
+                }
+            } catch (Exception e) {
+                throw new RuntimeException (e);
             }
         }
-        //创建beanFactory
 
-        //创建动态代理
-        //注册definition到spring容器
     }
 
     private Set<String> getSPIScanPackages(AnnotationMetadata annotationMetadata) {
@@ -137,16 +169,16 @@ public class SPIScanRegister implements ImportBeanDefinitionRegistrar , BeanFact
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-
+        this.beanFactory = beanFactory;
     }
 
     @Override
     public void setEnvironment(Environment environment) {
-
+        this.environment = environment;
     }
 
     @Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
-
+        this.resourceLoader = resourceLoader;
     }
 }

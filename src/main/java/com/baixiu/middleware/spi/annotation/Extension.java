@@ -4,12 +4,12 @@ import com.baixiu.middleware.spi.consts.CommonConsts;
 import java.lang.annotation.*;
 
 /**
- * À©Õ¹µãÉí·İ±êÊ¶¡£
- * Ê×ÏÈÊ¶±ğÈë×¤ÏµÍ³ÖĞµÄÏµÍ³Ãû³Æ£¬µÚÒ»¸öÖµ
- * È»ºóÊ¶±ğÈë×¤ÏµÍ³ÖĞ¾ßÌåÊÇÊ²Ã´³¡¾°À´½øĞĞÀ©Õ¹ÄÜÁ¦»®·Ö£¬µÚ¶ş¸öÖµ
- * ÔËĞĞÊ±È·¶¨
+ * æ‰©å±•ç‚¹èº«ä»½æ ‡è¯†ã€‚
+ * é¦–å…ˆè¯†åˆ«å…¥é©»ç³»ç»Ÿä¸­çš„ç³»ç»Ÿåç§°ï¼Œç¬¬ä¸€ä¸ªå€¼
+ * ç„¶åè¯†åˆ«å…¥é©»ç³»ç»Ÿä¸­å…·ä½“æ˜¯ä»€ä¹ˆåœºæ™¯æ¥è¿›è¡Œæ‰©å±•èƒ½åŠ›åˆ’åˆ†ï¼Œç¬¬äºŒä¸ªå€¼
+ * è¿è¡Œæ—¶ç¡®å®š
  * @author baixiu
- * @date 2023Äê12ÔÂ07ÈÕ
+ * @date 2023å¹´12æœˆ07æ—¥
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -17,13 +17,13 @@ import java.lang.annotation.*;
 public @interface Extension {
 
     /**
-     * ÏµÍ³Ãû³Æ¡£Èç£º½¡¿µ
+     * ç³»ç»Ÿåç§°ã€‚å¦‚ï¼šå¥åº·
      * @return
      */
     String appName() default CommonConsts.DEFAULT_EXTENSION_APP;
 
     /**
-     * ÏµÍ³ÖĞ¾ßÌåµÄ³¡¾°
+     * ç³»ç»Ÿä¸­å…·ä½“çš„åœºæ™¯
      * @return the string
      */
     String scenario() default CommonConsts.DEFAULT_SCENARIO;

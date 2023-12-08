@@ -8,10 +8,11 @@ import java.util.Stack;
 
 /**
  * default router 实现
+ * 可以在SPI SPIDefine rout 注解属性进行自定义扩展
  * @author baixiu
  * @date 创建时间 2023/12/7 8:22 PM
  */
-@Component
+@Component("defaultSPIRouter")
 public class ThreadLocalSPIRouter implements SPIRouter{
 
     private static TransmittableThreadLocal<Stack<String>> ROUTE_IDENTITY=TransmittableThreadLocal

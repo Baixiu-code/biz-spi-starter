@@ -1,19 +1,19 @@
 package com.baixiu.middleware.spi.consts;
 
 /**
- * ³£ÓÃ±äÁ¿
- * @author chenfanglin1
- * @date ´´½¨Ê±¼ä 2023/12/7 3:38 PM
+ * å¸¸é‡
+ * @author baixiu
+ * @date 2023å¹´12æœˆ08æ—¥
  */
 public final class  CommonConsts {
 
     /**
-     * ÏµÍ³ÏµÍ³Ãû³Æ
+     * é»˜è®¤æ‰©å±•ç‚¹æ³¨è§£ app å±æ€§é»˜è®¤å€¼
      */
     public final static String DEFAULT_EXTENSION_APP="DEFAULT_EXTENSION_APP";
 
     /**
-     * ÏµÍ³ÏÂ¾ßÌåµÄ³¡¾° Ä¬ÈÏÖµ DEFAULT_SCENARIO
+     * é»˜è®¤æ‰©å±•ç‚¹æ³¨è§£ scenario å±æ€§é»˜è®¤å€¼
      */
     public final static String DEFAULT_SCENARIO="DEFAULT_SCENARIO";
 
@@ -28,8 +28,14 @@ public final class  CommonConsts {
     public static final String DEFAULT_IDENTITY = "DEFAULT_IDENTITY";
 
     /**
-     * ÏµÍ³ÄÚÖÃ²ÎÊı×Ö¶ÎÃû³Æ
+     * é»˜è®¤å±æ€§å­—æ®µ
      */
     public static final String DEFAULT_IDENTITY_FIELD_NAME="identityField";
+
+    /**
+     *
+     * @link{com.baixiu.middleware.spi.annotation.SPIDefine}
+     */
+    public static final String SPI_DEFINE_ATTR_NAME="router";
 
 }

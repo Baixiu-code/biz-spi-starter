@@ -18,9 +18,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
@@ -112,7 +110,7 @@ public class ExtensionBeanInterceptor implements ApplicationContextAware
 
     @Override
     public void setBeanClassLoader(ClassLoader classLoader) {
-
+        this.classLoader=classLoader;
     }
 
     @Override
@@ -128,7 +126,7 @@ public class ExtensionBeanInterceptor implements ApplicationContextAware
 
     @Override
     public Class<?> getObjectType() {
-        return null;
+        return getServiceInterface ();
     }
 
 

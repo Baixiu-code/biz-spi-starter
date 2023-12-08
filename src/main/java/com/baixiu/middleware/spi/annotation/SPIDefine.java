@@ -20,6 +20,6 @@ public @interface SPIDefine {
      * 扩展点路由的路由方案 默认使用第一个
      * @return
      */
-    String router();
+    String router() default "defaultSPIRouter";
 
 }
