@@ -97,8 +97,11 @@ public class SPIScanRegister implements ImportBeanDefinitionRegistrar , BeanFact
                     Object spiProxyObject=interceptor.getObject();
                     BeanDefinitionBuilder beanDefinitionBuilder=BeanDefinitionBuilder.genericBeanDefinition(spiProxyObject.getClass());
                     beanDefinitionBuilder.addConstructorArgValue (Proxy.getInvocationHandler(spiProxyObject));
+                    
                     AbstractBeanDefinition realBeanDefinition = beanDefinitionBuilder.getBeanDefinition();
-                    beanDefinition.setPrimary(true);
+                    //非常重要。通过设置动态代理的bean为主对象，保证其能够在进行具体bean注入的时候注入成功。否则在具体注入的时候将出现
+                    //注入失败，因为在进行字段注入时不能出现多个对象的实现。
+                    realBeanDefinition.setPrimary(true);
 
                     //注册definition到spring容器
                     StringBuilder sb = new StringBuilder()

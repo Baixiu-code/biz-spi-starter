@@ -5,6 +5,7 @@ import com.baixiu.middleware.spi.context.SPIExtensionBeanContexts;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -19,13 +20,13 @@ import java.util.Map;
 public class ExtensionScanHandler implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        Map<String,Extension> allExtensions=applicationContext.getBeansOfType(Extension.class);
+        Map<String,Object> allExtensions=applicationContext.getBeansWithAnnotation (Extension.class);
         if(allExtensions!=null && allExtensions.size()>0){
-            for (Map.Entry<String, Extension> stringExtensionEntry : allExtensions.entrySet ()) {
-                Extension extensionItem=stringExtensionEntry.getValue();
+            allExtensions.forEach ((key,value)->{
+                Extension extensionItem= AnnotationUtils.findAnnotation(value.getClass (),Extension.class);
                 String realKey=extensionItem.appName()+"_"+extensionItem.scenario();
-                SPIExtensionBeanContexts.BEAN_EXTENDS_MAP.put(realKey,stringExtensionEntry.getValue());
-            }
+                SPIExtensionBeanContexts.BEAN_EXTENDS_MAP.put(realKey,value);
+            });
         }
     }
 }

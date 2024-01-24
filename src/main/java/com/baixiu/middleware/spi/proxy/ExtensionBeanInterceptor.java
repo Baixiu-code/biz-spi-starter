@@ -98,7 +98,7 @@ public class ExtensionBeanInterceptor implements ApplicationContextAware
             if(objects!=null && objects.length>0){
                 Field fields=objects[0].getClass().getDeclaredField(CommonConsts.DEFAULT_IDENTITY_FIELD_NAME);
                 fields.setAccessible (true);
-                String identityStr=fields.get(objects[0]).toString();
+                String identityStr=fields.get(objects[0]).toString()+"_"+CommonConsts.DEFAULT_SCENARIO;
                 log.info("getIdentity.identityStr.{}",identityStr);
                 return identityStr;
             }
