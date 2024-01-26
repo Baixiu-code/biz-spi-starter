@@ -18,6 +18,7 @@ import java.util.Map;
  */
 @Component
 public class ExtensionScanHandler implements ApplicationContextAware {
+    
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         Map<String,Object> allExtensions=applicationContext.getBeansWithAnnotation (Extension.class);
@@ -29,4 +30,5 @@ public class ExtensionScanHandler implements ApplicationContextAware {
             });
         }
     }
+    
 }

@@ -32,12 +32,9 @@ import java.util.Objects;
  */
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class ExtensionBeanInterceptor implements ApplicationContextAware
-            , BeanClassLoaderAware, MethodInterceptor, FactoryBean<Object> {
+public class ExtensionBeanInterceptor implements BeanClassLoaderAware, MethodInterceptor, FactoryBean<Object> {
 
     private static final Logger log = LoggerFactory.getLogger(ExtensionBeanInterceptor.class);
-
-    private ApplicationContext applicationContext;
 
     /**
      * 类加载器
@@ -58,11 +55,6 @@ public class ExtensionBeanInterceptor implements ApplicationContextAware
      * 扩展服务接口
      */
     private Class<?> serviceInterface;
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext=applicationContext;
-    }
 
 
     @Override
@@ -102,9 +94,9 @@ public class ExtensionBeanInterceptor implements ApplicationContextAware
                 log.info("getIdentity.identityStr.{}",identityStr);
                 return identityStr;
             }
-            return CommonConsts.DEFAULT_IDENTITY;
+            return CommonConsts.DEFAULT_IDENTITY+"1";
         } catch(Exception e) {
-            return CommonConsts.DEFAULT_IDENTITY;
+            return CommonConsts.DEFAULT_IDENTITY+"2";
         }
     }
 
@@ -119,7 +111,7 @@ public class ExtensionBeanInterceptor implements ApplicationContextAware
             Class<?> ifc = getServiceInterface();
             Assert.notNull(ifc, "Property 'serviceInterface' is required");
             Assert.notNull(getSpiRouter(), "Property 'spiRouter' is required");
-            serviceProxy = new ProxyFactory (ifc, this).getProxy(classLoader);
+            serviceProxy = new ProxyFactory(ifc, this).getProxy(classLoader);
         }
         return serviceProxy;
     }

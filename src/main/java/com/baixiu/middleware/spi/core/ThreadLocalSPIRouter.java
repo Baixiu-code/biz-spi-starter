@@ -17,23 +17,22 @@ public class ThreadLocalSPIRouter implements SPIRouter{
 
     private static TransmittableThreadLocal<Stack<String>> ROUTE_IDENTITY=TransmittableThreadLocal
             .withInitial(()->{
-                Stack<String> stack=new Stack<> ();
-                stack.push(CommonConsts.DEFAULT_IDENTITY);
+                Stack<String> stack=new Stack<>();
                 return stack;
             });
 
 
     @Override
     public String route(MethodInvocation methodInvocation) {
-        return ROUTE_IDENTITY.get().peek();
+        return ThreadLocalSPIRouter.ROUTE_IDENTITY.get().peek();
     }
 
     public static String popIdentity(){
-        return ROUTE_IDENTITY.get().pop();
+        return ThreadLocalSPIRouter.ROUTE_IDENTITY.get().pop();
     }
 
     public static void pushIdentity(String identity){
-        ROUTE_IDENTITY.get().push(identity);
+        ThreadLocalSPIRouter.ROUTE_IDENTITY.get().push(identity);
     }
 
 }

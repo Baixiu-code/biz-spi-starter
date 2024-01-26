@@ -87,7 +87,7 @@ public class SPIScanRegister implements ImportBeanDefinitionRegistrar , BeanFact
                     //get router
                     SPIRouter spiRouter=beanFactory.getBean(routerBeanName,SPIRouter.class);
 
-                    //创建beanFactory
+                    //通过beanFactory获取动态代理bean
                     ExtensionBeanInterceptor interceptor=this.beanFactory.getBean(ExtensionBeanInterceptor.class);
 
                     //创建动态代理
@@ -95,6 +95,7 @@ public class SPIScanRegister implements ImportBeanDefinitionRegistrar , BeanFact
                     interceptor.setServiceInterface(clazz);
                     interceptor.setSpiRouter(spiRouter);
                     Object spiProxyObject=interceptor.getObject();
+                    assert spiProxyObject != null;
                     BeanDefinitionBuilder beanDefinitionBuilder=BeanDefinitionBuilder.genericBeanDefinition(spiProxyObject.getClass());
                     beanDefinitionBuilder.addConstructorArgValue (Proxy.getInvocationHandler(spiProxyObject));
                     
@@ -104,9 +105,7 @@ public class SPIScanRegister implements ImportBeanDefinitionRegistrar , BeanFact
                     realBeanDefinition.setPrimary(true);
 
                     //注册definition到spring容器
-                    StringBuilder sb = new StringBuilder()
-                            .append(clazz.getSimpleName())
-                            .append("#Proxy");
+                    StringBuilder sb = new StringBuilder().append(clazz.getSimpleName()).append("#Proxy");
                     beanDefinitionRegistry.registerBeanDefinition(sb.toString(), realBeanDefinition);
 
                 }
